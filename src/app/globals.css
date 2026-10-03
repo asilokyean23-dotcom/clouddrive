@@ -1,0 +1,44 @@
+@import "tailwindcss";
+
+:root {
+  color-scheme: light;
+  --bg-grad-1: #eef2ff;
+  --bg-grad-2: #f5f3ff;
+  --bg-grad-3: #fdf2f8;
+}
+
+html, body {
+  height: 100%;
+}
+
+body {
+  background:
+    radial-gradient(60% 60% at 10% 0%, var(--bg-grad-1), transparent 60%),
+    radial-gradient(50% 50% at 100% 0%, var(--bg-grad-2), transparent 60%),
+    radial-gradient(60% 60% at 100% 100%, var(--bg-grad-3), transparent 60%),
+    #f8fafc;
+  min-height: 100vh;
+}
+
+/* Custom scrollbar */
+*::-webkit-scrollbar { height: 10px; width: 10px; }
+*::-webkit-scrollbar-thumb { background: rgba(99,102,241,0.25); border-radius: 999px; }
+*::-webkit-scrollbar-thumb:hover { background: rgba(99,102,241,0.45); }
+*::-webkit-scrollbar-track { background: transparent; }
+
+/* Drop overlay animation */
+@keyframes pulseRing {
+  0%   { box-shadow: 0 0 0 0 rgba(99,102,241,0.45); }
+  70%  { box-shadow: 0 0 0 16px rgba(99,102,241,0); }
+  100% { box-shadow: 0 0 0 0 rgba(99,102,241,0); }
+}
+.dropping {
+  animation: pulseRing 1.4s infinite;
+}
+
+/* Soft float for hero */
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50%      { transform: translateY(-6px); }
+}
+.floaty { animation: float 4.5s ease-in-out infinite; }
