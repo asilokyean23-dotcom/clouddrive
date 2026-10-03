@@ -1,4 +1,4 @@
-# ☁️ CloudDrive — your USB in the cloud
+# ☁️ SkyLocker — your school locker in the cloud
 
 A personal cloud storage app built for students: save files at school, open them at home,
 and always know where you left off.
@@ -38,19 +38,14 @@ and always know where you left off.
 
    Then open `.env` and paste your Neon connection string.
 
-5. Create the tables:
-
-   ```bash
-   npx drizzle-kit push
-   ```
-
-6. Start the app:
+5. Start the app (the database tables are created automatically on the
+   first run — no manual setup needed):
 
    ```bash
    npm run dev
    ```
 
-7. Open http://localhost:3000 🎉
+6. Open http://localhost:3000 🎉
 
 ## ☁️ How to deploy it (free)
 
@@ -59,7 +54,7 @@ and always know where you left off.
 ```bash
 git init
 git add .
-git commit -m "My CloudDrive app"
+git commit -m "My SkyLocker app"
 git branch -M main
 git remote add origin https://github.com/asilokyean23-dotcom/clouddrive.git
 git push -u origin main
@@ -71,18 +66,16 @@ git push -u origin main
 2. Go to https://vercel.com → **Add New… → Project** → import `clouddrive`
 3. Under **Environment Variables** add `DATABASE_URL` = your Neon connection string
 4. Click **Deploy** and you're live 🎉
-5. To create the tables on the live database, run this locally with your Neon URL in `.env`:
 
-   ```bash
-   npx drizzle-kit push
-   ```
+The database tables are created automatically the first time you open the
+deployed site — there is nothing else to run.
 
 ## 📂 Project structure
 
 ```
 src/
   app/
-    page.tsx              # the CloudDrive interface
+    page.tsx              # the SkyLocker interface
     api/
       files/              # upload, list, rename, star, delete
       files/[id]/raw/     # download / preview a file

@@ -8,6 +8,8 @@ import { FileDrawer } from "@/components/FileDrawer";
 import { Breadcrumb } from "@/components/Breadcrumb";
 import { ActivityFeed } from "@/components/ActivityFeed";
 import { RecentView } from "@/components/RecentView";
+import { SkyLockerMark } from "@/components/Logo";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 type View = "files" | "starred" | "recent" | "activity";
 
@@ -32,8 +34,27 @@ export default function HomePage() {
   const [dropping, setDropping] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [authReady, setAuthReady] = useState(false);
 
   const refresh = useCallback(() => setRefreshKey((k) => k + 1), []);
+
+  // Only show the drive to signed-in users.
+  useEffect(() => {
+    fetch("/api/auth/me")
+      .then((r) => {
+        if (!r.ok) {
+          window.location.href = "/login";
+          return null;
+        }
+        return r.json();
+      })
+      .then((d) => {
+        if (d?.user) setAuthReady(true);
+      })
+      .catch(() => {
+        window.location.href = "/login";
+      });
+  }, []);
 
   // Fetch all folders so the file-drawer dropdown can list every possible
   // destination folder.
@@ -128,19 +149,28 @@ export default function HomePage() {
     }
   }
 
+  if (!authReady) {
+    return (
+      <div className="grid min-h-screen place-items-center">
+        <div className="flex flex-col items-center gap-3">
+          <SkyLockerMark className="h-14 w-14 shadow-lg" />
+          <div className="h-6 w-6 animate-spin rounded-full border-2 border-slate-300 border-t-indigo-500" />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="flex min-h-screen flex-col" onDragEnter={onDragEnter}>
       <header className="sticky top-0 z-30 flex items-center gap-3 border-b border-slate-200 bg-white/70 px-4 backdrop-blur-md md:px-6">
         <div className="flex items-center gap-2 py-3">
-          <div className="grid h-9 w-9 place-items-center rounded-xl bg-gradient-to-br from-indigo-500 to-fuchsia-500 text-white shadow-md">
-            ☁️
-          </div>
+          <SkyLockerMark className="h-9 w-9 shadow-md" />
           <div className="leading-tight">
-            <div className="text-base font-semibold text-slate-900">
-              CloudDrive
+            <div className="text-base font-semibold tracking-tight text-slate-900">
+              SkyLocker
             </div>
             <div className="text-xs text-slate-500">
-              Your USB in the cloud
+              Your school locker in the cloud
             </div>
           </div>
         </div>
@@ -172,6 +202,18 @@ export default function HomePage() {
             className="inline-flex items-center gap-2 rounded-full bg-indigo-600 px-3 py-1.5 text-sm font-medium text-white shadow hover:bg-indigo-700"
           >
             ⬆️ Upload
+          </button>
+          <ThemeToggle />
+          <button
+            type="button"
+            onClick={async () => {
+              await fetch("/api/auth/logout", { method: "POST" });
+              window.location.href = "/login";
+            }}
+            className="rounded-full border border-slate-200 px-3 py-1.5 text-sm font-medium text-slate-700 hover:bg-slate-50"
+            title="Sign out of SkyLocker"
+          >
+            Sign out
           </button>
           <input
             ref={fileInputRef}
@@ -219,8 +261,8 @@ export default function HomePage() {
                         onClick={() => setLayout("grid")}
                         className={`rounded-full px-3 py-1 ${
                           layout === "grid"
-                            ? "bg-slate-900 text-white"
-                            : "text-slate-600 hover:bg-slate-100"
+                            ? "bg-indigo-500 text-white shadow"
+                            : "text-slate-400 hover:bg-slate-100 hover:text-slate-200"
                         }`}
                       >
                         Grid
@@ -230,8 +272,8 @@ export default function HomePage() {
                         onClick={() => setLayout("list")}
                         className={`rounded-full px-3 py-1 ${
                           layout === "list"
-                            ? "bg-slate-900 text-white"
-                            : "text-slate-600 hover:bg-slate-100"
+                            ? "bg-indigo-500 text-white shadow"
+                            : "text-slate-400 hover:bg-slate-100 hover:text-slate-200"
                         }`}
                       >
                         List
@@ -304,7 +346,7 @@ export default function HomePage() {
                 <div className="rounded-2xl bg-white px-6 py-5 text-center shadow-lg dropping">
                   <div className="text-3xl">⬇️</div>
                   <div className="mt-1 text-sm font-semibold text-slate-800">
-                    Drop to upload to CloudDrive
+                    Drop files into your SkyLocker
                   </div>
                   <div className="text-xs text-slate-500">
                     {folderId
@@ -317,7 +359,7 @@ export default function HomePage() {
 
             {toast && (
               <div className="pointer-events-none fixed inset-x-0 bottom-6 z-50 flex justify-center">
-                <div className="rounded-full bg-slate-900 px-4 py-2 text-sm font-medium text-white shadow-lg">
+                <div className="rounded-full bg-indigo-500 px-4 py-2 text-sm font-medium text-white shadow-lg">
                   {toast}
                 </div>
               </div>

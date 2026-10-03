@@ -1,40 +1,39 @@
 import { db } from "@/db";
 import { drives, type Drive } from "@/db/schema";
+import { ensureSchema } from "@/lib/bootstrap";
+import { getCurrentUser } from "@/lib/auth";
 import { eq } from "drizzle-orm";
 
-let cachedDriveId: string | null = null;
-
 /**
- * This is a single-tenant "personal cloud USB" so we keep a single drive per
- * database. On first request we create it and cache its id for the lifetime
- * of the process.
+ * Every student account owns exactly one personal drive. All files, folders
+ * and activity live inside that drive, which is how each account stays
+ * private from the others.
  */
-export async function getOrCreateDrive(): Promise<Drive> {
-  if (cachedDriveId) {
-    const existing = await db
-      .select()
-      .from(drives)
-      .where(eq(drives.id, cachedDriveId))
-      .limit(1);
-    if (existing.length) return existing[0];
-  }
+export async function getOrCreateDriveForUser(userId: string): Promise<Drive> {
+  await ensureSchema();
 
-  const all = await db.select().from(drives).limit(1);
-  if (all.length) {
-    cachedDriveId = all[0].id;
-    return all[0];
-  }
+  const existing = await db
+    .select()
+    .from(drives)
+    .where(eq(drives.userId, userId))
+    .limit(1);
+  if (existing[0]) return existing[0];
 
   const [created] = await db
     .insert(drives)
-    .values({ name: "My CloudDrive", color: "#4f46e5" })
+    .values({ userId, name: "My SkyLocker", color: "#4f46e5" })
     .returning();
-  if (!created) throw new Error("Failed to create default drive");
-  cachedDriveId = created.id;
+  if (!created) throw new Error("Failed to create drive");
   return created;
 }
 
+/**
+ * Resolves the drive of the signed-in user. Every API route calls this, so
+ * data is automatically scoped to the account that owns it.
+ */
 export async function getDriveId(): Promise<string> {
-  const drive = await getOrCreateDrive();
+  const user = await getCurrentUser();
+  if (!user) throw new Error("Not signed in");
+  const drive = await getOrCreateDriveForUser(user.id);
   return drive.id;
 }

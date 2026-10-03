@@ -3,15 +3,24 @@ import type { ReactNode } from "react";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "CloudDrive — your USB in the cloud",
+  title: "SkyLocker — your school locker in the cloud",
   description:
-    "Save, sync and continue your school work from home or school with a personal cloud USB.",
+    "SkyLocker keeps your essays, homework and photos in one private cloud locker, so you can start at school and finish at home.",
 };
+
+/**
+ * Applies the saved theme before first paint so the page never flashes the
+ * wrong colour scheme. Defaults to dark.
+ */
+const themeScript = `(function(){try{var t=localStorage.getItem('skylocker-theme');if(t!=='light'&&t!=='dark'){t='dark';}document.documentElement.setAttribute('data-theme',t);}catch(e){document.documentElement.setAttribute('data-theme','dark');}})();`;
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en">
-      <body className="text-slate-900 antialiased">{children}</body>
+    <html lang="en" suppressHydrationWarning>
+      <body className="text-slate-900 antialiased">
+        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+        {children}
+      </body>
     </html>
   );
 }

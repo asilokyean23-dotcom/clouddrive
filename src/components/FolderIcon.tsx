@@ -24,15 +24,9 @@ export function FolderIcon({
         className={`${dim}`}
         xmlns="http://www.w3.org/2000/svg"
       >
-        <defs>
-          <linearGradient id={`grad-${color.replace("#", "")}`} x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor={color} stopOpacity={0.95} />
-            <stop offset="100%" stopColor={color} stopOpacity={0.65} />
-          </linearGradient>
-        </defs>
         <path
           d="M3 11.5c0-1.4 1.1-2.5 2.5-2.5h9.3c.7 0 1.4.3 1.8.9l2.4 3.4c.4.6 1.1.9 1.8.9h13c1.4 0 2.5 1.1 2.5 2.5v12.8c0 1.4-1.1 2.5-2.5 2.5h-32C4.2 29.5 3 28.4 3 27V11.5z"
-          fill={`url(#grad-${color.replace("#", "")})`}
+          fill={color}
         />
         <path
           d={open ? "M3 13.5h34v3H3z" : "M3 14h34v15.5H3z"}

@@ -72,7 +72,7 @@ export async function GET() {
       "Content-Type": "application/zip",
       "Content-Length": String(content.byteLength),
       "Content-Disposition":
-        'attachment; filename="clouddrive-source.zip"',
+        'attachment; filename="skylocker-source.zip"',
     },
   });
 }

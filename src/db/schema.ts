@@ -12,9 +12,35 @@ import {
  * A "drive" represents a single personal cloud USB. For this app the student
  * gets one personal drive they can access from school and home.
  */
+/** A student account. Passwords are stored as bcrypt hashes only. */
+export const users = pgTable("users", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  name: text("name").notNull(),
+  email: text("email").notNull().unique(),
+  passwordHash: text("password_hash").notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+});
+
+/** Login sessions. The cookie holds a random token, never the password. */
+export const sessions = pgTable("sessions", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  userId: uuid("user_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  token: text("token").notNull().unique(),
+  expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+});
+
 export const drives = pgTable("drives", {
   id: uuid("id").primaryKey().defaultRandom(),
-  name: text("name").notNull().default("My CloudDrive"),
+  /** The owner of this drive. One drive per student account. */
+  userId: uuid("user_id").references(() => users.id, { onDelete: "cascade" }),
+  name: text("name").notNull().default("My SkyLocker"),
   /** Hex color used for the drive's avatar */
   color: text("color").notNull().default("#4f46e5"),
   createdAt: timestamp("created_at", { withTimezone: true })
@@ -117,6 +143,8 @@ export const activities = pgTable(
   }),
 );
 
+export type User = typeof users.$inferSelect;
+export type Session = typeof sessions.$inferSelect;
 export type Drive = typeof drives.$inferSelect;
 export type Folder = typeof folders.$inferSelect;
 export type FileRow = typeof files.$inferSelect;

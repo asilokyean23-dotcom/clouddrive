@@ -55,17 +55,17 @@ export function Sidebar({
 
   return (
     <aside className="flex h-full w-72 shrink-0 flex-col gap-4 border-r border-slate-200 bg-white/60 p-4 backdrop-blur">
-      <div className="rounded-2xl bg-gradient-to-br from-indigo-500 via-violet-500 to-fuchsia-500 p-4 text-white shadow-md">
+      <div className="rounded-2xl bg-indigo-600 p-4 text-white shadow-md">
         <div className="flex items-center gap-3">
           <div className="floaty grid h-12 w-12 place-items-center rounded-xl bg-white/20 ring-1 ring-white/40">
             <span className="text-2xl">☁️</span>
           </div>
           <div className="min-w-0">
             <div className="truncate text-sm font-semibold">
-              My CloudDrive
+              My SkyLocker
             </div>
             <div className="text-xs text-white/80">
-              Your USB, online. Anywhere.
+              Your school locker in the cloud
             </div>
           </div>
         </div>
@@ -142,7 +142,7 @@ export function Sidebar({
         </p>
         <a
           href="/api/source"
-          className="mt-3 flex items-center justify-center gap-2 rounded-lg bg-slate-900 px-3 py-2 text-xs font-semibold text-white shadow hover:bg-slate-800"
+          className="mt-3 flex items-center justify-center gap-2 rounded-lg bg-indigo-500 px-3 py-2 text-xs font-semibold text-white shadow transition hover:bg-indigo-400"
         >
           ⬇️ Download this app (.zip)
         </a>
